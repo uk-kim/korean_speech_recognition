@@ -31,10 +31,16 @@ import datetime as dt
 import re
 import math
 import sys
+import optparse
 
 
 # Option
-verbose = False
+parser = optparse.OptionParser()
+parser.add_option("-v", action="store_true", dest="verbose", default="False",
+                  help="This option prints the detail information of g2p process.")
+
+(options,args) = parser.parse_args()
+verbose = options.verbose
 
 # Check Python version
 ver_info = sys.version_info
