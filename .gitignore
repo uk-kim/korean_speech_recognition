@@ -1,3 +1,6 @@
 ./data/*
 ./sample/*
 ./env_korean_stt/*
+./*.pickle
+./*__pycache__*
+./*.pyc
