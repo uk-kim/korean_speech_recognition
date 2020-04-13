@@ -26,27 +26,6 @@ def get_file_list(path, audio_ext='.pcm', trans_ext='.txt'):
     return file_list
 
 
-def get_transcript(fname, trans_ext='.txt', ENCODING='euc-kr'):
-    txt = ""
-    try:
-        with open(fname + trans_ext, 'r', encoding=ENCODING) as f:
-            txt = f.read().strip()
-    except Exception as e:
-        print("ERROR: {}".format(e))
-    return txt
-
-
-def get_audiobuff(fname, audio_ext='.pcm', ENDIAN='int16'):
-    buff = None
-    try:
-        with open(fname + audio_ext, 'rb') as f:
-            buff = f.read()
-        buff = np.frombuffer(buff, dtype=ENDIAN)
-    except Exception as e:
-        print("ERROR: {}".format(e))
-    return buff
-
-
 def main(args):
     dataset    = args.dataset
     datadir    = args.datadir
@@ -55,6 +34,7 @@ def main(args):
     endian     = args.endian
     encoding   = args.txt_encoding
     samplerate = args.samplerate
+    ratios     = args.split_ratio
 
     file_list = get_file_list(datadir, audio_ext, trans_ext)
     
@@ -81,10 +61,6 @@ def main(args):
         label_list.append(labels)
         feature_list.append(feature)
 
-        # print(" >> File : ", f)
-        # print("    ", prons)
-        # print("    ", labels)
-        # print("    feature shape : ", feature.shape)
     time.sleep(1)
     print("  Data preparation done.")
     print()
@@ -95,9 +71,27 @@ def main(args):
     label_list_sf   = [label_list[i] for i in idxs]
     feature_list_sf = [feature_list[i] for i in idxs]
 
-    data = (file_list_sf, feature_list_sf, label_list_sf)
-    with open(args.outdir, 'wb') as f:
-        pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
+    #### Split dataset into {train / valid / test} sets.
+    ratios = [float(rate) for rate in ratios.split(':')]
+
+    n_total_files = len(file_list)
+    n_train = int(n_total_files * ratios[0])
+    n_valid = int(n_total_files * ratios[1])
+    n_test  = n_total_files - n_train - n_valid
+    
+    data_train = (file_list_sf[:n_train], feature_list_sf[:n_train], label_list_sf[:n_train])
+    data_valid = (file_list_sf[n_train:-n_test], feature_list_sf[n_train:-n_test], label_list_sf[n_train:-n_test])
+    data_test  = (file_list_sf[-n_test:], feature_list_sf[-n_test:], label_list_sf[-n_test:])
+
+    with open(os.path.join(args.outdir, 'data.train.pickle'), 'wb') as f:
+        pickle.dump(data_train, f, pickle.HIGHEST_PROTOCOL)
+
+    with open(os.path.join(args.outdir, 'data.valid.pickle'), 'wb') as f:
+        pickle.dump(data_valid, f, pickle.HIGHEST_PROTOCOL)
+
+    with open(os.path.join(args.outdir, 'data.test.pickle'), 'wb') as f:
+        pickle.dump(data_test, f, pickle.HIGHEST_PROTOCOL)
+
     print("  Data saved in {}".format(args.outdir))
     print()
 
@@ -114,7 +108,9 @@ if __name__ == "__main__":
     parser.add_argument('--endian', default='int16', type=str)
     parser.add_argument('--txt_encoding', default='euc-kr', type=str)
     parser.add_argument('--samplerate', default=16000, type=int)
-    parser.add_argument('--outdir', required=True, type=str, help="dir where preprocessed data will be save")
+    parser.add_argument('--outdir', required=False, default='./', type=str, help="dir where preprocessed data will be save")
+    parser.add_argument('--split_ratio', required=False, type=str, \
+                        default='0.7:0.2:0.1', help="dir where preprocessed data will be save")
 
     args = parser.parse_args()
 

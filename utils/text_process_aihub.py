@@ -15,15 +15,17 @@ ver_info = sys.version_info
 
 HANGULS = ['ㅂ', 'ㅍ', 'ㅃ', 'ㄷ', 'ㅌ', 'ㄸ', 'ㄱ', 'ㅋ', 'ㄲ', 'ㅅ', 'ㅆ', 'ㅎ', 'ㅈ', 'ㅊ', 'ㅉ', 'ㅁ', 'ㄴ', 'ㄹ', 'ㅂ', 'ㅍ', 'ㄷ', 'ㅌ', 'ㄱ', 'ㅋ', 'ㄲ', 'ㅅ', 'ㅆ', 'ㅎ', 'ㅈ', 'ㅊ', 'ㅁ', 'ㄴ', 'ㅇ', 'ㄹ', 'ㄱㅅ', 'ㄴㅈ', 'ㄴㅎ', 'ㄹㄱ', 'ㄹㅁ', 'ㄹㅂ', 'ㄹㅅ', 'ㄹㅌ', 'ㄹㅍ', 'ㄹㅎ', 'ㅂㅅ', 'ㅣ', 'ㅔ', 'ㅐ', 'ㅏ', 'ㅡ', 'ㅓ', 'ㅜ', 'ㅗ', 'ㅖ', 'ㅒ', 'ㅑ', 'ㅕ', 'ㅠ', 'ㅛ', 'ㅟ', 'ㅚ', 'ㅙ', 'ㅞ', 'ㅘ', 'ㅝ', 'ㅢ']
 SYMBOLS = ['p0', 'ph', 'pp', 't0', 'th', 'tt', 'k0', 'kh', 'kk', 's0', 'ss', 'h0', 'c0', 'ch', 'cc', 'mm', 'nn', 'rr', 'pf', 'ph', 'tf', 'th', 'kf', 'kh', 'kk', 's0', 'ss', 'h0', 'c0', 'ch', 'mf', 'nf', 'ng', 'll', 'ks', 'nc', 'nh', 'lk', 'lm', 'lb', 'ls', 'lt', 'lp', 'lh', 'ps', 'ii', 'ee', 'qq', 'aa', 'xx', 'vv', 'uu', 'oo', 'ye', 'yq', 'ya', 'yv', 'yu', 'yo', 'wi', 'wo', 'wq', 'we', 'wa', 'wv', 'xi']
-META_TAGS = ['[AMBIG:DUP]', '[AMBIG:UNK]', '[GANTU]', '[NOISE:b]', '[NOISE:n]', '[NOISE:l]', '[NOISE:o]', '[SPACE]', '[UNK]']
+META_TAGS = ['[SPACE]', '[AMBIG:DUP]', '[AMBIG:UNK]', '[GANTU]', '[NOISE:b]', '[NOISE:n]', '[NOISE:l]', '[NOISE:o]', '[UNK]']
 
 
 def get_korean_symbol_dataframe():
     df_korSym = dataframe()
-    df_korSym['Hangul'] = HANGULS
-    df_korSym['Symbol'] = SYMBOLS
-    for tag in META_TAGS:
-           df_korSym.loc[len(df_korSym)] = [tag, tag]
+    df_korSym['Hangul'] = META_TAGS + HANGULS
+    df_korSym['Symbol'] = META_TAGS + SYMBOLS
+    # df_korSym['Hangul'] = HANGULS
+    # df_korSym['Symbol'] = SYMBOLS
+    # for tag in META_TAGS:
+    #       df_korSym.loc[len(df_korSym)] = [tag, tag]
 
     return df_korSym
 

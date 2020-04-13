@@ -5,7 +5,10 @@ It has functions as data2pickle, pickle2tf_record, batch generate ...
 
 import os
 import pickle
-from random import shuffle
+import random
+
+import numpy as np
+#from random import shuffle
 
 
 class DataLoadFailException(Exception):
@@ -27,18 +30,20 @@ class AIHubDataSets:
         
         self.idx = 0
 
-    def load_datasets(data_dir=None, pickle_dir=None, records_dir=None):
+    def load_datasets(self, data_dir=None, pickle_dir=None, records_dir=None):
         if data_dir:
             1
         elif pickle_dir:
+            # data = (file_list, feature_list, label_list)
             data = self.load_pickle_data(pickle_dir)
-            (file_list, label_list, feature_list) = data
         elif records_dir:
             raise DataLoadFailException()
         else:
             raise DataLoadFailException()
 
-        return (file_list, label_list, feature_list)
+        self.file_list    = data[0]
+        self.feature_list = data[1]
+        self.label_list   = data[2]
 
     def load_pickle_data(self, file_path):
         """
@@ -78,15 +83,20 @@ class AIHubDataSets:
         Without padding, each data have different sequence length.
         With padding, find maximum sequence length and zero-pad to data with smaller seq len 
         """
-        file_list    = self.file_list[self.idx: self.idx + batch_size]
-        label_list   = self.label_list[self.idx: self.idx + batch_size]
-        feature_list = self.feature_list[self.idx: self.idx + batch_size]
-           
-        if self.idx + batch_size >= len(self.file_list):
-            self.idx = 0
-            self.__shuffle__()
+        if batch_size == -1:
+            file_list    = self.file_list
+            label_list   = self.label_list
+            feature_list = self.feature_list
         else:
-            self.idx += batch_size
+            file_list    = self.file_list[self.idx: self.idx + batch_size]
+            label_list   = self.label_list[self.idx: self.idx + batch_size]
+            feature_list = self.feature_list[self.idx: self.idx + batch_size]
+               
+            if self.idx + batch_size >= len(self.file_list):
+                self.idx = 0
+                self.__shuffle__()
+            else:
+                self.idx += batch_size
 
         if padding:
             feature_dim = feature_list[0].shape[1]
@@ -99,7 +109,7 @@ class AIHubDataSets:
 
             label_np = np.zeros((len(file_list), max(label_seq)), np.int)
             for i, l in enumerate(label_list):
-                label_np[i, :l] = np.array(label_list[i], dtype=np.int)
+                label_np[i, :len(l)] = np.array(label_list[i], dtype=np.int)
 
             return file_list, label_np, feature_np
         else:
