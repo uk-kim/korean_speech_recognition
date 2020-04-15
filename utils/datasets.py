@@ -45,6 +45,8 @@ class AIHubDataSets:
         self.feature_list = data[1]
         self.label_list   = data[2]
 
+        self.n_data       = len(self.file_list)
+
     def load_pickle_data(self, file_path):
         """
         Pickle file is composed as (file_list, label_list, feature_list)
@@ -74,6 +76,9 @@ class AIHubDataSets:
         self.label_list   = label_list
         self.feature_list = feature_list
     
+    def init(self):
+        self.__shuffle__()
+        self.idx = 0
 
     def next_batch(self, batch_size, padding=True):
         """
