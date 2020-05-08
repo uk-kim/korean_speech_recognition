@@ -124,7 +124,7 @@ def get_prons_and_labels_from_file(file, rule_in, rule_out, df_korSym, encoding=
     text = get_transcript(file, ENCODING=encoding)
     prons, labels = get_prons_and_labels_from_text(text, rule_in, rule_out, df_korSym, with_space, with_unk)
 
-    return prons, labels
+    return text, prons, labels
 
 
 def get_prons_and_kor_symbols_from_labels(labels, df_korSym, with_space=True, with_unk=True):

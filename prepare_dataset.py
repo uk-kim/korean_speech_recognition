@@ -55,7 +55,7 @@ def main(args):
     label_list   = []
     feature_list = []
     for f in tqdm(file_list):
-        prons, labels = aihub.get_prons_and_labels_from_file(f, rule_in, rule_out, df_korSym, encoding, True, True)
+        text, prons, labels = aihub.get_prons_and_labels_from_file(f, rule_in, rule_out, df_korSym, encoding, True, True)
         feature       = transform_mfcc_from_file(f + audio_ext, endian='int16', sr=16000)
 
         label_list.append(labels)
