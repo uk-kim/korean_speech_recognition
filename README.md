@@ -14,6 +14,15 @@ CTC 방법을 토대로 음향모델을 학습하고, 향후 언어모델(방법
 ## 3. Data Preparation
 ### Transcript
   * [KoG2P](https://github,.com/scarletcho/KoG2P)를 활용하여 주어진 transcript를 발음 형태로 변환한다.
+#### Example
+  * AIhub 데이터셋의 transcript 파일은 euc-kr 포멧으로 인코딩 되어 있다.
+```
+with open('./sample/sample.txt', 'r', encoding='euc-kr') as f:
+    lines = f.readlines()
+print(lines)
+```
+  * `./sample/sample.txt`:  '아/ 몬 소리야, 그건 또. b/\n' 
+
 ### Audio feature transform
   * `python-speech-features` 패키지를 통한 mfcc feature 사용
 ### Code
