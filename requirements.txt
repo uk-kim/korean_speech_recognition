@@ -2,5 +2,5 @@ pandas
 six
 scipy
 python_speech_features
-tensorflow==1.13.1
+tensorflow==2.5.0
 tqdm
